@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
@@ -9,7 +10,7 @@ import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 
 import { type AppRouter } from "~/server/api/root";
-import { getUrl, transformer } from "./shared";
+import { getUrl, transformer } from "../trpc/shared";
 
 export const api = createTRPCReact<AppRouter>();
 const isWindowAvailable: boolean = typeof window !== 'undefined';

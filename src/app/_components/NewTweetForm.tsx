@@ -2,7 +2,8 @@
 
 import { type FC, useState } from "react";
 import Image from "next/image";
-import { api } from "~/trpc/react";
+
+import { api } from "~/utils/trpc";
 import { useSession } from "next-auth/react";
 
 const NewTweetForm: FC = () => {

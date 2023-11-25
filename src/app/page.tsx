@@ -3,7 +3,7 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { api } from "~/trpc/react";
+import { api } from "~/utils/trpc";
 
 import NewTweetForm from "./_components/NewTweetForm";
 import { TweetList } from "./_components/TweetList";
