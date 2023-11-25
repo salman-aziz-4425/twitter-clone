@@ -1,57 +1,53 @@
 "use client"
 
-import { useState } from "react";
-import Image from "next/image";
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { api } from "~/trpc/react";
 
+import NewTweetForm from "./_components/NewTweetForm";
+import { TweetList } from "./_components/TweetList";
+
 export default  function Home() {
   const sessionData=useSession()
   const pathname=usePathname()
-  const [content,setContent]=useState("")
-   const {data,isLoading}=api.tweet.getTweet.useQuery({id:String(sessionData.data?.user.id)})
-  
-   console.log(data)
-
-  const createTweet=api.tweet.create.useMutation({
-    onSuccess: ()=>{
-      console.log("Tweet created")
-    }
-  })
-
+   const {data,fetchNextPage,isLoading,hasNextPage}=api.tweet.getTweet.useInfiniteQuery({},{ getNextPageParam: (lastPage) => lastPage.nextCursor,getPreviousPageParam: (firstPage) => firstPage.prevCursor })
+   if (sessionData.status!=='authenticated') return
   return (
-    <div className="pl-4">
-    <h1>{pathname === '/' ? 'Home' : pathname}</h1>
-  
-    <div className="h-16 w-16 pt-4 flex items-center gap-4">
-      {sessionData.status === 'authenticated' && (
-        <Image className="rounded-full" src={String(sessionData?.data.user.image)} height={100} width={100} alt="User Avatar" />
-      )}
-      {
-        sessionData.status === "authenticated" &&  <div className="flex flex-col">
-        <h1 className="font-medium text-xl">{sessionData.data?.user.name}</h1>
-        <div className="flex gap-2 items-center">
-        <form className="mt-2">
-          <input
-            onChange={(e)=>setContent(String(e.target.value))}
-            type="text"
-            placeholder="What's happening?"
-            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-500"
+    <div className="py-2 w-full">
+      <div className="sticky top-0 bg-white z-10 p-4 border-b flex items-center gap-4">
+      <h1 className="font-bold text-2xl">{pathname === '/' ? 'Home' : pathname}</h1>
+      <h1 className="font-medium text-xl">{sessionData.data?.user.name}</h1>
+      </div>
+    
+  <NewTweetForm />
+
+    <div className="flex flex-col w-full items-start gap-4 px-4 py-2">
+      {!isLoading ?
+        data?.pages.map((data,index) => (
+      <div  key={index} className="w-full">
+        <InfiniteScroll 
+        inverse
+        key={index}
+        dataLength={data.data.length} 
+        next={fetchNextPage} 
+        hasMore={hasNextPage!}
+        loader={<h1>Loading....</h1>}>
+         {data?.data.length>0 ? data.data.map((data)=>(
+          <div key={data.id} className="border-b">
+         <TweetList 
+          name={sessionData?.data?.user.name}
+          imagePath={sessionData?.data?.user.image}
+          content={data.content}
           />
-        </form>
-        <button className="p-4 bg-black text-white rounded-md " onClick={()=>createTweet.mutate({name:String(sessionData.data?.user.id),content:String(content)})}>Post</button>
-        </div>
+          </div>
+        
+        
+         )):<h1>No Tweets</h1>}
+         </InfiniteScroll>
       </div>
-      }
+        )):<h1 className="text-3xl">Loading.....</h1>}
     </div>
-    <div className="flex flex-col items-start gap-4 py-8">
-      {
-        !isLoading && data?.map((data)=>(
-          <h1 key={data.id}>{data.content}</h1>
-        ))
-      }
-      </div>
     
   </div>
   );

@@ -32,7 +32,7 @@ export default function RootLayout({
         <NextAuthProvider>
           <SideNav/>
           <div className="min-h-screen flex-grow border-x">
-        <TRPCReactProvider cookies={cookies().toString()}>
+        <TRPCReactProvider  cookies={cookies().toString()}>
           {children}
         </TRPCReactProvider>
         </div>
