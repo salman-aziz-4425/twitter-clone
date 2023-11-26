@@ -13,7 +13,22 @@ const NewTweetForm: FC = () => {
   const utils=api.useUtils()
 
   const createTweet = api.tweet.create.useMutation({
-    onSuccess: () => {
+    onSuccess: (newData) => {
+
+      utils.tweet.getTweet.setInfiniteData({},(oldData)=>{
+        if (oldData?.pages[0] == null) return;
+        
+        return {
+          ...oldData,
+          pages:[
+           {
+            ...oldData?.pages[0],
+            data:[newData,...oldData?.pages[0]?.data]
+           },
+           ...oldData.pages.slice(1)
+          ]
+        }
+      })
       console.log("Tweet created");
     },
   });

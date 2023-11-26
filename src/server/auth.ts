@@ -1,10 +1,13 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import DiscordProvider from "next-auth/providers/discord";
+import GoogleProvider from "next-auth/providers/google";
+
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
+
 import { db } from "~/server/db";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -12,6 +15,10 @@ import { db } from "~/server/db";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
+
+
+
+
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
@@ -46,8 +53,15 @@ export const authOptions: NextAuthOptions = {
   providers: [
     DiscordProvider({
       clientId:String(process.env.DISCORD_CLIENT_ID),
-      clientSecret:String( process.env.DISCORD_CLIENT_SECRET)
+      clientSecret:String( process.env.DISCORD_CLIENT_SECRET),
+      allowDangerousEmailAccountLinking:true,
+    }),
+    GoogleProvider({
+      clientId:String(process.env.GOOGLE_CLIENT_ID),
+      clientSecret:String(process.env.GOOGLE_CLIENT_SECRET),
+      allowDangerousEmailAccountLinking:true
     })
+    
     /**
      * ...add more providers here.
      *

@@ -7,9 +7,9 @@ import {
 
 export const tweetRouter = createTRPCRouter({
   getTweet: protectedProcedure
-  .input(z.object({ limit:z.number().optional(),cursor: z.object({ id: z.string(), createdAt: z.date() }).optional()}))
+  .input(z.object({ userId:z.string().optional(),limit:z.number().optional(),cursor: z.object({ id: z.string(), createdAt: z.date() }).optional()}))
   .query(async ({ ctx, input }) => {
-    const { cursor,limit=6 } = input;
+    const { cursor,limit=6,userId=ctx.session.user.id } = input;
     const data=await ctx.db.tweet.findMany({
       take:limit+1,
       cursor: cursor
@@ -19,7 +19,7 @@ export const tweetRouter = createTRPCRouter({
           }
         : undefined,
       where: {
-        userId: ctx.session.user.id,
+        userId: userId,
       },
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     });
@@ -40,7 +40,16 @@ export const tweetRouter = createTRPCRouter({
       prevCursor
     }
   }),
-
+  getProfileInfo:protectedProcedure.input(z.object({id:z.string()})).query(({ctx,input})=>{
+    console.log("data")
+    console.log(input.id)
+    const userData=ctx.db.user.findUnique({
+      where:{
+        id:input.id
+      }
+    })
+    return userData
+  }),
   create: protectedProcedure
     .input(z.object({ userId:z.string(),content:z.string()}))
     .mutation(async ({ ctx, input }) => {

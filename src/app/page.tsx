@@ -9,10 +9,14 @@ import NewTweetForm from "./_components/NewTweetForm";
 import { TweetList } from "./_components/TweetList";
 
 export default  function Home() {
+
   const sessionData=useSession()
   const pathname=usePathname()
+
    const {data,fetchNextPage,isLoading,hasNextPage}=api.tweet.getTweet.useInfiniteQuery({},{ getNextPageParam: (lastPage) => lastPage.nextCursor,getPreviousPageParam: (firstPage) => firstPage.prevCursor })
+   
    if (sessionData.status!=='authenticated') return
+
   return (
     <div className="py-2 w-full">
       <div className="sticky top-0 bg-white z-10 p-4 border-b flex items-center gap-4">
@@ -27,13 +31,12 @@ export default  function Home() {
         data?.pages.map((data,index) => (
       <div  key={index} className="w-full">
         <InfiniteScroll 
-        inverse
         key={index}
         dataLength={data.data.length} 
         next={fetchNextPage} 
         hasMore={hasNextPage!}
         loader={<h1>Loading....</h1>}>
-         {data?.data.length>0 ? data.data.map((data)=>(
+         {data?.data?.length>0 ? data?.data?.map((data)=>(
           <div key={data.id} className="border-b">
          <TweetList 
           name={sessionData?.data?.user.name}

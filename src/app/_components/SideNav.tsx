@@ -6,6 +6,7 @@ import Image from 'next/image';
 
 import { usePathname } from 'next/navigation';
 import { signIn,signOut, useSession } from "next-auth/react";
+import Link from 'next/link';
 
 const SideNav = () => {
   const pathname = usePathname();
@@ -17,7 +18,10 @@ const SideNav = () => {
         <Image src="/twitter.png" height={100} width={100} alt='Logo'/>
       </div>
       <ul className="space-y-2">
-        <li className={`${pathname==='/' && 'text-gray-300'} hover:text-gray-300  cursor-pointer`}>Home</li>
+        <li className={`${pathname==='/' && 'text-gray-300'} hover:text-gray-300  cursor-pointer`}><Link href="/">Home</Link></li>
+
+   <li className={`${pathname==='/profile' && 'text-gray-300'} hover:text-gray-300  cursor-pointer`}> <Link href={"/profile/"+data?.user.id}>Profile</Link></li>
+       
         <li onClick={()=>{
     if (data?.expires){
       void signOut({ callbackUrl:process.env.NEXTAUTH_URL })

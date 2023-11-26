@@ -8,7 +8,7 @@ await import("./src/env.mjs");
 const config = {
   images: {
 
-  domains: ["cdn.discordapp.com"]
+  domains: ["cdn.discordapp.com","images.pexels.com","lh3.googleusercontent.com"]
   
   },
 };
