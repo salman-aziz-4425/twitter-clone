@@ -1,19 +1,15 @@
 "use client"
 
-
 import InfiniteScroll from "react-infinite-scroll-component"
 import { TweetList } from "~/app/_components/TweetList"
 import { api } from "~/utils/trpc"
 
 
-
 export default function Profile({ params }: { params: { slug: string } }){
 
 const sessionData= api.tweet.getProfileInfo.useQuery({id:String(params?.slug[0])})
-const {data,fetchNextPage,isLoading,hasNextPage}=api.tweet.getTweet.useInfiniteQuery({userId:params.slug[0] },{ getNextPageParam: (lastPage) => lastPage.nextCursor})
-console.log(params.slug[0])
+const {data,fetchNextPage,isLoading,hasNextPage}=api.tweet.getTweet.useInfiniteQuery({userId:params.slug[0],limit:7 },{ getNextPageParam: (lastPage) => lastPage.nextCursor})
 
-console.log(sessionData.data)
   return (
     <div>
          <div className="sticky top-0 bg-white z-10 p-4 border-b flex items-center gap-4">

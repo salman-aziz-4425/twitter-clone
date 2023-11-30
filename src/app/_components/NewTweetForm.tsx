@@ -1,6 +1,6 @@
 "use client"
 
-import { type FC, useState } from "react";
+import { type FC, useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 import { api } from "~/utils/trpc";
@@ -8,9 +8,14 @@ import { useSession } from "next-auth/react";
 
 const NewTweetForm: FC = () => {
   const [content, setContent] = useState<string>("");
+  const textAreaRef = useRef<HTMLTextAreaElement>(null); 
 
   const sessionData=useSession()
   const utils=api.useUtils()
+
+  useEffect(()=>{
+    updateTextAreaSize()
+  },[content])
 
   const createTweet = api.tweet.create.useMutation({
     onSuccess: (newData) => {
@@ -29,9 +34,17 @@ const NewTweetForm: FC = () => {
           ]
         }
       })
+      alert("Tweet created")
       console.log("Tweet created");
     },
   });
+
+  const updateTextAreaSize = () => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "0";
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+    }
+  };
 
   return (
     <div className="py-4 border-b px-4 w-full">
@@ -49,10 +62,12 @@ const NewTweetForm: FC = () => {
                   alt="User Avatar"
                 />
               </div> 
-                <textarea
+              <textarea
+                  ref={textAreaRef}
+                  style={{ minHeight: '2rem' }}
                   onChange={(e) => setContent(String(e.target.value))}
                   placeholder="What's happening?"
-                  className="flex-grow h-full w-full p-4 outline-none overflow-hidden text-lg"
+                  className="flex-grow h-full w-full p-4 outline-none overflow-hidden text-lg min-h-40"
                 />
               </form>
             

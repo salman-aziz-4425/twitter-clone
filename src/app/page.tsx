@@ -28,7 +28,7 @@ export default  function Home() {
 
     <div className="flex flex-col w-full items-start gap-4 px-4 py-2">
       {!isLoading ?
-        data?.pages.map((data,index) => (
+      data?.pages.map((data,index) => (
       <div  key={index} className="w-full">
         <InfiniteScroll 
         key={index}
